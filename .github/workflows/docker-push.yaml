@@ -4,10 +4,10 @@ on:
   workflow_dispatch:
     inputs:
       confirmation:
-        description: type
+        description: type yes to deploy
         required: true
         default: 'no'
-                
+
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
@@ -20,7 +20,7 @@ jobs:
           exit 1
 
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Setup Docker BuildX
         uses: docker/setup-buildx-action@v2
@@ -35,23 +35,27 @@ jobs:
       - name: Log in to Amazon ECR
         uses: aws-actions/amazon-ecr-login@v1
 
-      - name: Build Docker image
+      - name: Build Docker image locally
         run: |
-          docker build -t ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/code-server:latest ./code-server
+          docker build -t code-server:latest ./code-server
+
       - name: Run Trivy vulnerability scan
         uses: aquasecurity/trivy-action@0.30.0
         with:
-              image-ref: 'code-server:latest'
-              format: 'sarif'
-              exit-code: 0
-              severity: 'CRITICAL,HIGH'
-              output: 'trivy-results.sarif'
-     
+          image-ref: 'code-server:latest'
+          format: 'sarif'
+          exit-code: 0
+          severity: 'CRITICAL,HIGH'
+          output: 'trivy-results.sarif'
+
       - name: Upload Trivy scan results to GitHub Security tab
         uses: github/codeql-action/upload-sarif@v3
         with:
-                sarif_file: 'trivy-results.sarif'
-        
+          sarif_file: 'trivy-results.sarif'
+
+      - name: Tag Docker image for ECR
+        run: |
+          docker tag code-server:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/code-server:latest
 
       - name: Push Docker image to Amazon ECR
         run: |
