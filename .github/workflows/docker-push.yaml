@@ -40,9 +40,9 @@ jobs:
           docker build -t code-server:latest ./code-server
 
       - name: Run Trivy vulnerability scan
-        uses: aquasecurity/trivy-action@v1
+        uses: aquasecurity/trivy-action@0.30.0
         with:
-          image-ref: 'code-server:latest'
+          image-ref: 'code-server'
           format: 'sarif'
           exit-code: 0
           severity: 'CRITICAL,HIGH'
