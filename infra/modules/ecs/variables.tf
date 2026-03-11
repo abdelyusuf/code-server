@@ -51,3 +51,7 @@ variable "alb_listener_arn" {
   type        = string
   description = "ARN of the HTTPS listener from the ALB module"
 }
+
+variable "container_password" {
+  type = string
+}

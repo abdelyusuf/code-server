@@ -45,26 +45,33 @@ resource "aws_ecs_task_definition" "this" {
 
   container_definitions = <<TASK_DEFINITION
 [
- {
-  "name": "code-server",
-  "image": "${var.container_image}",
-  "portMappings": [
-    {
-      "containerPort": 8080,
-      "protocol": "tcp"
-    }
-  ],
-  "essential": true,
-  "logConfiguration": {
-    "logDriver": "awslogs",
-    "options": {
-      "awslogs-group": "/ecs/code-server",
-      "awslogs-create-group": "true",
-      "awslogs-region": "eu-west-2",
-      "awslogs-stream-prefix": "ecs"
+  {
+    "name": "code-server",
+    "image": "${var.container_image}",
+    "imagePullBehavior": "ALWAYS",
+    "portMappings": [
+      {
+        "containerPort": 8080,
+        "protocol": "tcp"
+      }
+    ],
+    "essential": true,
+    "environment": [
+      {
+        "name": "PASSWORD",
+        "value": "${var.container_password}"
+      }
+    ],
+    "logConfiguration": {
+      "logDriver": "awslogs",
+      "options": {
+        "awslogs-group": "/ecs/code-server",
+        "awslogs-create-group": "true",
+        "awslogs-region": "eu-west-2",
+        "awslogs-stream-prefix": "ecs"
+      }
     }
   }
- }
 ]
 TASK_DEFINITION
 
