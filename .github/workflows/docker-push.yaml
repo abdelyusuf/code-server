@@ -1,65 +1,79 @@
 name: docker build and push to ecr
 
 on:
-  workflow_dispatch:
-    inputs:
-      confirmation:
-        description: type yes to deploy
-        required: true
-        default: 'no'
+workflow_dispatch:
+inputs:
+confirmation:
+description: type yes to deploy
+required: true
+default: 'no'
+
 permissions:
-  contents: read
-  security-events: write
+contents: read
+security-events: write
 
 jobs:
-  build-and-push:
-    runs-on: ubuntu-latest
+build-and-push:
+runs-on: ubuntu-latest
 
-    steps:
-      - name: Check if deployment is confirmed
-        if: ${{ github.event.inputs.confirmation != 'yes' }}
-        run: |
-          echo "Deployment not confirmed. Exiting."
-          exit 1
+```
+steps:
+  - name: Check if deployment is confirmed
+    if: ${{ github.event.inputs.confirmation != 'yes' }}
+    run: |
+      echo "Deployment not confirmed. Exiting."
+      exit 1
 
-      - name: Checkout code
-        uses: actions/checkout@v4
+  - name: Checkout code
+    uses: actions/checkout@v4
 
-      - name: Setup Docker BuildX
-        uses: docker/setup-buildx-action@v2
+  - name: Setup Docker BuildX
+    uses: docker/setup-buildx-action@v2
 
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}
+  - name: Configure AWS Credentials
+    uses: aws-actions/configure-aws-credentials@v1
+    with:
+      aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      aws-region: ${{ secrets.AWS_REGION }}
 
-      - name: Log in to Amazon ECR
-        uses: aws-actions/amazon-ecr-login@v2
+  - name: Log in to Amazon ECR
+    uses: aws-actions/amazon-ecr-login@v2
 
-      - name: Build Docker image locally
-        run: |
-          docker build -t code-server:latest ./code-server
+  - name: Build Docker image locally
+    run: |
+      docker buildx build \
+        --platform linux/amd64 \
+        -t code-server:latest \
+        ./code-server \
+        --load
 
-      - name: Run Trivy vulnerability scan
-        uses: aquasecurity/trivy-action@master
-        with:
-          image-ref: 'code-server:latest'
-          format: 'sarif'
-          exit-code: 0
-          severity: 'CRITICAL,HIGH'
-          output: 'trivy-results.sarif'
+  - name: Run container with password
+    run: |
+      docker run -d \
+        -e PASSWORD=${{ secrets.CODE_SERVER_PASSWORD }} \
+        -p 8080:8080 \
+        code-server:latest
 
-      - name: Upload Trivy scan results to GitHub Security tab
-        uses: github/codeql-action/upload-sarif@v3
-        with:
-          sarif_file: 'trivy-results.sarif'
+  - name: Run Trivy vulnerability scan
+    uses: aquasecurity/trivy-action@master
+    with:
+      image-ref: 'code-server:latest'
+      format: 'sarif'
+      exit-code: 0
+      severity: 'CRITICAL,HIGH'
+      output: 'trivy-results.sarif'
 
-      - name: Tag Docker image for ECR
-        run: |
-          docker tag code-server:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/code-server:latest
+  - name: Upload Trivy scan results to GitHub Security tab
+    uses: github/codeql-action/upload-sarif@v3
+    with:
+      sarif_file: 'trivy-results.sarif'
 
-      - name: Push Docker image to Amazon ECR
-        run: | 
-          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/code-server:latest
+  - name: Tag Docker image for ECR
+    run: |
+      docker tag code-server:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/code-server:latest
+
+  - name: Push Docker image to Amazon ECR
+    run: |
+      docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/code-server:latest
+

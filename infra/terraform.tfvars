@@ -10,7 +10,7 @@ az_a                  = "eu-west-2a"
 az_b                  = "eu-west-2b"
 
 # ECS Module
-app_name        = "value"
+app_name        = "code-server"
 task_cpu        = 1024
 task_memory     = 2048
 container_port  = 8080
