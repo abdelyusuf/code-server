@@ -16,8 +16,8 @@ provider "aws" {
 
 }
 provider "cloudflare" {
-  email   = var.cloudflare_email     # or directly: "your@email.com"
-  api_key = var.cloudflare_api_key   # or directly from secrets
+  email   = var.cloudflare_email     
+  api_key = var.cloudflare_api_key   
 }
 
 
