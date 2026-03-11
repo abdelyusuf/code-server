@@ -14,7 +14,7 @@ app_name        = "value"
 task_cpu        = 1024
 task_memory     = 2048
 container_port  = 8080
-container_image = "992382674979.dkr.ecr.eu-west-2.amazonaws.com/code-server@sha256:9ac023eecb0911d0382dedb34f2405a79d434cff29f7d8bf6d046a7cd2eaea77"
+container_image = "992382674979.dkr.ecr.eu-west-2.amazonaws.com/code-server:latest"
 desired_count   = 3
 
 # ALB Module
