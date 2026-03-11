@@ -93,6 +93,11 @@ jobs:
     needs: terraform_static_analysis
     runs-on: ubuntu-latest
     steps:
+      - name: Install Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+           terraform_version: "1.14.3"
+
       - name: Checkout repository
         uses: actions/checkout@v2
 
@@ -112,6 +117,10 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event.inputs.confirmation == 'yes'
     steps:
+     - name: Install Terraform
+       uses: hashicorp/setup-terraform@v2
+       with:
+        terraform_version: "1.14.3"
       - name: Checkout repository
         uses: actions/checkout@v2
 
