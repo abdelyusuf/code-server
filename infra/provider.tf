@@ -15,14 +15,14 @@ provider "aws" {
   region = "eu-west-2"
 
 }
-resource "aws_s3_bucket" "this" {
-  bucket = "my-tf-test-bucket-992382674979"
 
 
-  tags = {
-    Name        = "My bucket"
-    Environment = "Dev"
+terraform {
+  required_version = ">= 1.0.0"  
+  backend "s3" {
+    bucket  = "my-tf-test-bucket-992382674979"
+    key     = "state"
+    region  = "eu-west-2"
+    encrypt = true
   }
 }
-
-
