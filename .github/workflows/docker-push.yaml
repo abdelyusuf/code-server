@@ -40,7 +40,7 @@ jobs:
           docker build -t code-server:latest ./code-server
 
       - name: Run Trivy vulnerability scan
-        uses: aquasecurity/trivy-action@0.30.0
+        uses: aquasecurity/trivy-action@master
         with:
           image-ref: 'code-server:latest'
           format: 'sarif'
@@ -58,5 +58,5 @@ jobs:
           docker tag code-server:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/code-server:latest
 
       - name: Push Docker image to Amazon ECR
-        run: |
+        run: | 
           docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/code-server:latest
