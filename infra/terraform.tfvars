@@ -21,8 +21,7 @@ desired_count   = 3
 alb_name           = "code-server"
 health_check_path  = "/login"
 ssl_policy         = "ELBSecurityPolicy-2016-08"
-public_subnets     = ["${module.vpc.public_subnet_a_id}", "${module.vpc.public_subnet_b_id}"]
-alb_security_group = ["${module.security_groups.default_sg_id}"]
+
 
 # Security Group Module
 project_name          = "code-server"
