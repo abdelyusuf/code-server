@@ -126,3 +126,7 @@ variable "cloudflare_api_token" {
   type = string
   sensitive = true
 }
+variable "container_password" {
+  type = string
+  sensitive = true
+}

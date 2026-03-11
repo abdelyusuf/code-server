@@ -29,6 +29,7 @@ module "ecs" {
   container_port   = var.container_port
   alb_listener_arn = module.alb.https_listener_arn
   security_group   = module.security_groups.security_groups
+  container_password = var.container_password
 }
 
 module "security_groups" {
