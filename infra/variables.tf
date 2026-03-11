@@ -117,4 +117,7 @@ variable "domain_name" {
   description = "the domain name for infra"
 }
 
-
+variable "cloudflare_email" {}
+variable "cloudflare_api_key" {
+  sensitive = true
+}
