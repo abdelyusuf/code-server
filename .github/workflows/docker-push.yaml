@@ -50,7 +50,6 @@ jobs:
      - name: Run container with password
        run: |
             docker run -d \
-            -e PASSWORD=${{ secrets.CODE_SERVER_PASSWORD }} \
              -p 8080:8080 \
              code-server:latest
 
