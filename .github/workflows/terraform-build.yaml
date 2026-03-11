@@ -69,6 +69,9 @@ jobs:
 
       - name: Terraform Init (Backend S3)
         working-directory: ./infra
+        env:
+         CLOUDFLARE_EMAIL: ${{ secrets.CLOUDFLARE_EMAIL }}
+         CLOUDFLARE_API_KEY: ${{ secrets.CLOUDFLARE_API_KEY }}
         run: |
           terraform init -backend-config="bucket=my-tf-test-bucket-992382674979" \
                          -backend-config="key=state" \
@@ -103,6 +106,9 @@ jobs:
 
       - name: Terraform Plan
         working-directory: ./infra
+        env:
+         CLOUDFLARE_EMAIL: ${{ secrets.CLOUDFLARE_EMAIL }}
+         CLOUDFLARE_API_KEY: ${{ secrets.CLOUDFLARE_API_KEY }}
         id: tf-plan
         run: |
           terraform init -backend-config="bucket=my-tf-test-bucket-992382674979" \
@@ -127,6 +133,9 @@ jobs:
 
       - name: Terraform Apply
         working-directory: ./infra
+        env:
+         CLOUDFLARE_EMAIL: ${{ secrets.CLOUDFLARE_EMAIL }}
+         CLOUDFLARE_API_KEY: ${{ secrets.CLOUDFLARE_API_KEY }}
         run: |
           terraform init -backend-config="bucket=my-tf-test-bucket-992382674979" \
                          -backend-config="key=state" \
