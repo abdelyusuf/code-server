@@ -122,7 +122,7 @@ variable "cloudflare_email" {
   sensitive = true
 }
 
-variable "cloudflare_api_key" {
+variable "cloudflare_api_token" {
   type = string
   sensitive = true
 }

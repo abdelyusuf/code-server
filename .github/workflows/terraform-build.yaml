@@ -114,7 +114,7 @@ jobs:
                          -backend-config="encrypt=true"
                          
           terraform plan -var "cloudflare_email=${{ secrets.CLOUDFLARE_EMAIL }}" \
-                         -var "cloudflare_api_key=${{ secrets.CLOUDFLARE_API_KEY }}"
+                         -var "cloudflare_api_token=${{ secrets.CLOUDFLARE_API_KEY }}"
 
   terraform_apply:
     name: 'Terraform Apply'
@@ -138,5 +138,5 @@ jobs:
                          -backend-config="region=eu-west-2" \
                          -backend-config="encrypt=true"
           terraform apply -var "cloudflare_email=${{ secrets.CLOUDFLARE_EMAIL }}" \
-                          -var "cloudflare_api_key=${{ secrets.CLOUDFLARE_API_KEY }}" \
+                          -var "cloudflare_api_token=${{ secrets.CLOUDFLARE_API_KEY }}" \
                           -auto-approve
