@@ -40,15 +40,12 @@ jobs:
        uses: aws-actions/amazon-ecr-login@v2
 
      - name: Build Docker image locally
-       env:
-        ECR_REPO_URI: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/code-server
        run: |
             docker buildx build \
             --platform linux/amd64 \
-             -t $ECR_REPO_URI:latest \
-             ./code-server \
-              --push \
-              --build-arg PASSWORD=${{ secrets.CODE_SERVER_PASSWORD }}
+            -t code-server:latest \
+            ./code-server \
+            --load
 
      - name: Run container with password
        run: |
