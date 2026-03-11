@@ -43,9 +43,10 @@ jobs:
        run: |
             docker buildx build \
             --platform linux/amd64 \
-            -t code-server:latest \
-            ./code-server \
-            --load
+             -t $ECR_REPO_URI:latest \
+             ./code-server \
+              --push \
+              --build-arg PASSWORD=${{ secrets.CODE_SERVER_PASSWORD }}
 
      - name: Run container with password
        run: |
