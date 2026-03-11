@@ -100,7 +100,7 @@ jobs:
         working-directory: infra
         id: tf-plan
         run: |
-          terraform init -backend-config="my-tf-test-bucket-992382674979" \
+          terraform init -backend-config="bucket=my-tf-test-bucket-992382674979" \
                          -backend-config="key=state" \
                          -backend-config="region=eu-west-2" \
                          -backend-config="encrypt=true"
@@ -118,7 +118,7 @@ jobs:
       - name: Terraform Apply
         working-directory: infra
         run: |
-          terraform init -backend-config="my-tf-test-bucket-992382674979" \
+          terraform init -backend-config="bucket=my-tf-test-bucket-992382674979" \
                          -backend-config="key=state" \
                          -backend-config="region=eu-west-2" \
                          -backend-config="encrypt=true"
