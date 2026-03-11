@@ -106,9 +106,6 @@ jobs:
 
       - name: Terraform Plan
         working-directory: ./infra
-        env:
-         TF_VAR_CLOUDFLARE_EMAIL: ${{ secrets.CLOUDFLARE_EMAIL }}
-         TF_VAR_CLOUDFLARE_API_KEY: ${{ secrets.CLOUDFLARE_API_KEY }}
         id: tf-plan
         run: |
           terraform init -backend-config="bucket=my-tf-test-bucket-992382674979" \
@@ -134,9 +131,6 @@ jobs:
 
       - name: Terraform Apply
         working-directory: ./infra
-        env:
-         TF_VAR_CLOUDFLARE_EMAIL: ${{ secrets.CLOUDFLARE_EMAIL }}
-         TF_VAR_CLOUDFLARE_API_KEY: ${{ secrets.CLOUDFLARE_API_KEY }}
         run: |
           terraform init -backend-config="bucket=my-tf-test-bucket-992382674979" \
                          -backend-config="key=state" \
