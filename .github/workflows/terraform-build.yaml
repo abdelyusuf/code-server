@@ -77,6 +77,8 @@ jobs:
                          -backend-config="key=state" \
                          -backend-config="region=eu-west-2" \
                          -backend-config="encrypt=true"
+                         -var "cloudflare_email=${{ secrets.CLOUDFLARE_EMAIL }}" \
+                         -var "cloudflare_api_key=${{ secrets.CLOUDFLARE_API_KEY }}"
 
       - name: Terraform Validate
         working-directory: ./infra
@@ -112,6 +114,8 @@ jobs:
                          -backend-config="key=state" \
                          -backend-config="region=eu-west-2" \
                          -backend-config="encrypt=true"
+                         -var "cloudflare_email=${{ secrets.CLOUDFLARE_EMAIL }}" \
+                         -var "cloudflare_api_key=${{ secrets.CLOUDFLARE_API_KEY }}"
           terraform plan -var "cloudflare_email=${{ secrets.CLOUDFLARE_EMAIL }}" \
                          -var "cloudflare_api_key=${{ secrets.CLOUDFLARE_API_KEY }}"
 
