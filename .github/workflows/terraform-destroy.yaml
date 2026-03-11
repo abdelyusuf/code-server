@@ -3,18 +3,21 @@ name: Terraform Destroy
 on:
   workflow_dispatch:
     inputs:
-      confirm:
+      confirmation:
         description: "Type 'yes' to confirm destruction of infrastructure."
         required: true
         default: "no"
 
+permissions:
+  contents: read
+
 jobs:
-  terraform:
+  terraform_destroy:
     runs-on: ubuntu-latest
 
     steps:
       - name: Check if destruction is confirmed
-        if: ${{ github.event.inputs.confirm != 'yes' }}
+        if: ${{ github.event.inputs.confirmation != 'yes' }}
         run: |
           echo "Destruction not confirmed. Exiting."
           exit 1
@@ -22,25 +25,34 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Set up Terraform
+      - name: Install Terraform
         uses: hashicorp/setup-terraform@v2
         with:
-          terraform_version: 1.9.7 
+          terraform_version: "1.14.3"
 
-      - name: Terraform Init with S3 Backend
-        working-directory: Terraform
+      - name: Terraform Init (Backend S3)
+        working-directory: ./infra
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          CLOUDFLARE_EMAIL: ${{ secrets.CLOUDFLARE_EMAIL }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_KEY }}
         run: |
-          terraform init -backend-config="my-tf-test-bucket-992382674979" \
+          terraform init -backend-config="bucket=my-tf-test-bucket-992382674979" \
                          -backend-config="key=state" \
                          -backend-config="region=eu-west-2" \
                          -backend-config="encrypt=true"
 
       - name: Terraform Destroy
-        working-directory: Terraform
+        working-directory: ./infra
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        run: terraform destroy -auto-approve 
+          CLOUDFLARE_EMAIL: ${{ secrets.CLOUDFLARE_EMAIL }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_KEY }}
+        run: |
+          terraform destroy \
+            -var "container_password=${{ secrets.CODE_SERVER_PASSWORD }}" \
+            -var "cloudflare_email=${{ secrets.CLOUDFLARE_EMAIL }}" \
+            -var "cloudflare_api_token=${{ secrets.CLOUDFLARE_API_KEY }}" \
+            -auto-approve
